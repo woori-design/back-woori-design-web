@@ -86,6 +86,26 @@ public class Member extends BaseTimeEntity {
         this.deletedAt = LocalDateTime.now();
 
         // 사용자의 모든 키를 비활성화
-        this.keyStores.clear();
+        this.keyStores.forEach(KeyStore::deactivate);
+    }
+
+    /**
+     * 사용자 API 키 추가 편의 메서드 (양방향 연관관계 설정)
+     *
+     * @param keyStore 추가할 API 키 정보
+     */
+    public void addKey(KeyStore keyStore) {
+        this.keyStores.add(keyStore);
+        keyStore.updateMember(this);
+    }
+
+    /**
+     * 사용자 API 키 제거 편의 메서드 (양방향 연관관계 제거)
+     *
+     * @param keyStore 제거할 API 키 정보
+     */
+    public void removeKey(KeyStore keyStore) {
+        this.keyStores.remove(keyStore);
+        keyStore.updateMember(null);
     }
 }

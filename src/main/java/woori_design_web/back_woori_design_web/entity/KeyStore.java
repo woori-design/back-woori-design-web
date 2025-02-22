@@ -72,4 +72,8 @@ public class KeyStore extends BaseTimeEntity {
         this.isActive = false;
     }
 
+    protected void updateMember(Member member) {
+        this.member = member;
+    }
+
 }
