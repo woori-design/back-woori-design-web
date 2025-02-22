@@ -78,6 +78,12 @@ public class Member extends BaseTimeEntity {
     private List<KeyStore> keyStores = new ArrayList<>();
 
     /**
+     * 사용자의 리프레시 토큰 목록
+     */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
+
+    /**
      * 소프트 삭제 처리
      */
     public void delete() {
@@ -87,6 +93,9 @@ public class Member extends BaseTimeEntity {
 
         // 사용자의 모든 키를 비활성화
         this.keyStores.forEach(KeyStore::deactivate);
+
+        // 모든 리프레시 토큰 만료 처리
+        this.refreshTokens.forEach(RefreshToken::expire);
     }
 
     /**
@@ -107,5 +116,25 @@ public class Member extends BaseTimeEntity {
     public void removeKey(KeyStore keyStore) {
         this.keyStores.remove(keyStore);
         keyStore.updateMember(null);
+    }
+
+    /**
+     * 리프레시 토큰 추가 편의 메서드 (양방향 연관관계 설정)
+     *
+     * @param refreshToken 추가할 리프레시 토큰
+     */
+    public void addRefreshToken(RefreshToken refreshToken) {
+        this.refreshTokens.add(refreshToken);
+        refreshToken.updateMember(this);
+    }
+
+    /**
+     * 리프레시 토큰 제거 편의 메서드 (양방향 연관관계 제거)
+     *
+     * @param refreshToken 제거할 리프레시 토큰
+     */
+    public void removeRefreshToken(RefreshToken refreshToken) {
+        this.refreshTokens.remove(refreshToken);
+        refreshToken.updateMember(null);
     }
 }
