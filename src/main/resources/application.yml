@@ -42,3 +42,7 @@ kakao:
     javascript-key: ${KAKAO_JAVASCRIPT_KEY}
     admin-key: ${KAKAO_ADMIN_KEY}
     redirect-uri: ${KAKAO_REDIRECT_URI}
+
+jwt:
+  access-token-secret: ${JWT_ACCESS_TOKEN_SECRET}
+  refresh-token-secret: ${JWT_REFRESH_TOKEN_SECRET}
