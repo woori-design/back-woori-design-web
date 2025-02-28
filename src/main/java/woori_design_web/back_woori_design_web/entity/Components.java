@@ -1,10 +1,13 @@
 package woori_design_web.back_woori_design_web.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "COMPONENTS")
 public class Components {
 
     @Id
@@ -20,16 +23,16 @@ public class Components {
     @Column(name = "component_description")
     private String description;
 
-    // component_type
-    // 컴포넌트 타입을 enum으로 관리할까?
 
     // authority
-    // authority도 enum으로 관리?
-    // 그럼 어떤 권한들을 만들꺼지?
+    @Column
+    private Authority authority;
+
 
     /**
      * 빌드된 컴포넌트가 올려져 있는 s3 위치
      */
+    @Column(columnDefinition = "TEXT")
     private String s3Url;
 
 }
