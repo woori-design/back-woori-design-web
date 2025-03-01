@@ -4,11 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+
 @Entity
-@Table(name = "COMMENT")
-@AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+@AllArgsConstructor
+@Table(name = "component_likes")
+public class ComponentLikes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,17 +20,9 @@ public class Comment {
     @JoinColumn(name = "member_id")
     private Member member;
 
-
-
     // 컴포넌트
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name =  "components_id")
+    @JoinColumn(name = "components_id")
     private Components components;
-
-    /**
-     * 댓글 내용
-     */
-    @Column(columnDefinition = "text")
-    private String content;
 
 }
