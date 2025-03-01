@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findFirstByMemberOrderByCreatedAtDesc(Member member);
+    Optional<RefreshToken> findFirstByMemberIdOrderByCreatedAtDesc(Long memberId);
 }

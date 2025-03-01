@@ -42,5 +42,16 @@ public record OAuthDto() {
             String status
     ) {}
 
-
+    @Builder
+    public record OAuthTokenResponse(
+            String accessToken,
+            String refreshToken,
+            String isNewMember,
+            String memberId,
+            String name,
+            String email,
+            String provider,
+            String role,
+            String status
+    ) {}
 }
