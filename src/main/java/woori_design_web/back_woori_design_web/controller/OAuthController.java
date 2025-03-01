@@ -30,7 +30,7 @@ public class OAuthController {
      * @param code 인가 코드
      * @return KakaoLoginResponse (accessToken, refreshToken, isNewMember, memberId, name, email, provider, role, status) 카카오 로그인 응답
      */
-    @GetMapping("/kakao-login")
+    @GetMapping("/oauth2/authorization/kakao")
     public ResponseEntity<ResponseDto<KakaoLoginResponse>> kakaoLogin(@RequestParam("code") String code) {
         try {
             // 카카오 토큰 발급
@@ -60,7 +60,7 @@ public class OAuthController {
      * @param refreshToken 리프레시 토큰
      * @return OAuthTokenResponse (accessToken, refreshToken, isNewMember, memberId, name, email, provider, role, status) 토큰 갱신 응답
      */
-    @PostMapping("/refresh")
+    @PostMapping("/api/v1/refresh/token")
     public ResponseEntity<ResponseDto<OAuthTokenResponse>> refreshToken(@RequestParam("refreshToken") String refreshToken) {
         try {
             OAuthTokenResponse response = authService.refreshAccessToken(refreshToken);

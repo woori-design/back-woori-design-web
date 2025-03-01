@@ -73,6 +73,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.equals("/kakao-login") || path.equals("/refresh");
+        return path.equals("/oauth2/authorization/kakao") || path.equals("/api/v1/refresh/token");
     }
 }

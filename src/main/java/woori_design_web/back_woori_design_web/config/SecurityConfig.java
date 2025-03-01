@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화 (개발시)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/kakao-login", "/refresh")
+                        .requestMatchers("/oauth2/authorization/kakao", "/api/v1/refresh/token")
                         .authenticated()
                         .anyRequest().permitAll()
                 )
