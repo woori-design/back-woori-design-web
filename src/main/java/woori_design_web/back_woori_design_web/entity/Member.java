@@ -88,7 +88,7 @@ public class Member extends BaseTimeEntity {
 
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> like = new ArrayList<>();
+    private List<ComponentLikes> componentLikes = new ArrayList<>();
 
 
 
