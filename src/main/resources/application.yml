@@ -7,6 +7,8 @@ server:
 spring:
   application:
     name: back-woori-design-web
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${db.url:jdbc:mysql://localhost:3307/woori_design_web?allowPublicKeyRetrieval=true}
@@ -33,3 +35,14 @@ logging:
   level:
     #    org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace
+
+kakao:
+  api:
+    rest-api-key: ${KAKAO_REST_API_KEY}
+    javascript-key: ${KAKAO_JAVASCRIPT_KEY}
+    admin-key: ${KAKAO_ADMIN_KEY}
+    redirect-uri: ${KAKAO_REDIRECT_URI}
+
+jwt:
+  access-token-secret: ${JWT_ACCESS_TOKEN_SECRET}
+  refresh-token-secret: ${JWT_REFRESH_TOKEN_SECRET}

@@ -283,6 +283,9 @@ gradle-app.setting
 *.hprof
 
 application.properties
+application-secret.yml
+*.yml
+.env
 *.properties
 build/
 gradle/
