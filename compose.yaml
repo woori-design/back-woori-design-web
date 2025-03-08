@@ -1,6 +1,24 @@
 services:
+  minio:
+    image: minio/minio:RELEASE.2025-02-28T09-55-16Z
+    container_name: minio
+    restart: always
+    ports:
+      - '9000:9000'  # API PORT
+      - '9001:9001'  # CONSOLE PORT
+    environment:
+      MINIO_ROOT_USER: admin  # MinIO 루트 사용자 이름
+      MINIO_ROOT_PASSWORD: rootpassword123  # MinIO 루트 비밀번호 (8자 이상)
+      MINIO_CONSOLE_USER: console  # MinIO 콘솔 사용자 이름
+      MINIO_CONSOLE_PASSWORD: consolepassword123  # MinIO 콘솔 비밀번호 (8자 이상)
+    volumes:
+      - './docker-data/minio-data:/data'  # MinIO 데이터 저장 경로
+      - './docker-conf/minio_credentials.json:/etc/minio_credentials.json:ro'  # MinIO 자격 증명 파일
+    command: server /data --console-address ":9001"  # MinIO 서버 실행 명령
+
   demo_mysql8:
     image: mysql:8.0
+    container_name: mysql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
@@ -10,11 +28,11 @@ services:
       MYSQL_ROOT_PASSWORD: root
       TZ: Asia/Seoul
     ports:
-      - 3307:3306
+      - '3307:3306'
     restart: unless-stopped
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./db/config/:/docker-entrypoint-initdb.d/
+      - mysql_data:/var/lib/mysql  # MySQL 데이터 저장 경로
+      - ./db/config/:/docker-entrypoint-initdb.d/  # MySQL 초기화 스크립트 경로
 
 volumes:
   mysql_data:
