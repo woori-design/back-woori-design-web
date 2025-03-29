@@ -7,5 +7,5 @@ import woori_design_web.back_woori_design_web.entity.Components;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByComponents(Components components);
+    List<Comment> findByComponentsId(Long componentsId);
 }
