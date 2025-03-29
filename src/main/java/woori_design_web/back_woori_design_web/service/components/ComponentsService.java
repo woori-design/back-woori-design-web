@@ -26,9 +26,7 @@ public class ComponentsService {
         List<CommentsResponse> commentsResponseList = comments.stream()
                 .map(comment -> {
                     Member member = comment.getMember();
-                    boolean isMine = false;
-
-                    if (userId != null) isMine = member.getId().equals(userId);
+                    boolean isMine = member.getId().equals(userId);
 
                     return CommentsResponse.builder()
                             .id(comment.getId())

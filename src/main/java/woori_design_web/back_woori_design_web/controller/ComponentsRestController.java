@@ -2,6 +2,8 @@ package woori_design_web.back_woori_design_web.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,12 @@ public class ComponentsRestController {
     @GetMapping("/{componentId}/comments")
     public ResponseEntity<ResponseDto<CommentListResponse>> getCommentsByComponent(@PathVariable long componentId) {
         try {
-            Long userId = 1L; // 사용자 ID (null 가능, 추후 인증 서비스 구현 시 해당 메서드로 대체 예정)
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            // 추후 사용자 ID 가져오는 로직 추가
+//            Long userId = (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails)
+//                    ? ((CustomUserDetails) authentication.getPrincipal()).getId()
+//                    : null;
+            Long userId = null;
             CommentListResponse response = componentsService.getCommentsByComponent(componentId, userId);
             return ResponseEntity.ok(new ResponseDto<>(ResponseDto.Status.SUCCESS, "댓글 목록 조회 성공", response));
         } catch (Exception e) {
