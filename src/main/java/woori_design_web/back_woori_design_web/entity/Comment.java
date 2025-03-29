@@ -2,13 +2,15 @@ package woori_design_web.back_woori_design_web.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @Table(name = "COMMENT")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,5 +33,4 @@ public class Comment {
      */
     @Column(columnDefinition = "text")
     private String content;
-
 }
