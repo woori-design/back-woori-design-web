@@ -2,10 +2,12 @@ package woori_design_web.back_woori_design_web.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import woori_design_web.back_woori_design_web.entity.Member;
+import woori_design_web.back_woori_design_web.entity.SocialType;
 
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
     Optional<Member> findById(Long id);
+    Optional<Member> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 }

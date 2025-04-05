@@ -19,5 +19,11 @@ public class MemberServiceFacade {
         );
     }
 
+    public Member getMemberInfoByEmail(String email){
+        return memberRepository.findByEmail(email).orElseThrow(
+                () -> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+    }
+
 
 }

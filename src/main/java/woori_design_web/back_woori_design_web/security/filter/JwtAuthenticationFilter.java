@@ -19,6 +19,7 @@ import woori_design_web.back_woori_design_web.entity.RefreshToken;
 import woori_design_web.back_woori_design_web.repository.MemberRepository;
 import woori_design_web.back_woori_design_web.repository.RefreshTokenRepository;
 import woori_design_web.back_woori_design_web.security.dto.CustomMemberDetails;
+import woori_design_web.back_woori_design_web.security.jwt.service.JwtService;
 import woori_design_web.back_woori_design_web.util.JwtUtil;
 
 import java.io.IOException;
