@@ -1,6 +1,6 @@
 package woori_design_web.back_woori_design_web.security.jwt.service.sendmanger;
 
-import static com.readyvery.readyverydemo.config.JwtConfig.*;
+
 
 import java.util.Optional;
 
@@ -8,13 +8,16 @@ import org.springframework.context.annotation.Configuration;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.readyvery.readyverydemo.config.JwtConfig;
-import com.readyvery.readyverydemo.security.jwt.service.create.JwtTokenGenerator;
+
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import woori_design_web.back_woori_design_web.config.JwtConfig;
+import woori_design_web.back_woori_design_web.security.jwt.service.create.JwtTokenGenerator;
+
+import static woori_design_web.back_woori_design_web.config.JwtConfig.EMAIL_CLAIM;
 
 @Configuration
 @Slf4j
