@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.RequestEntity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -12,23 +14,22 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
-import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequestEntityConverter;
+import org.springframework.security.oauth2.client.endpoint.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import woori_design_web.back_woori_design_web.repository.MemberRepository;
 import woori_design_web.back_woori_design_web.repository.RefreshTokenRepository;
 import woori_design_web.back_woori_design_web.security.exception.CustomAuthenticationEntryPoint;
-import woori_design_web.back_woori_design_web.security.filter.JwtAuthenticationFilter;
+
 import woori_design_web.back_woori_design_web.security.jwt.filter.JwtAuthenticationProcessingFilter;
 import woori_design_web.back_woori_design_web.security.jwt.service.JwtService;
-import woori_design_web.back_woori_design_web.security.oauth2.CustomRequestEntityConverter;
+import woori_design_web.back_woori_design_web.security.oauth2.CustomParametersConverter;
 import woori_design_web.back_woori_design_web.security.oauth2.handler.OAuth2LoginFailureHandler;
 import woori_design_web.back_woori_design_web.security.oauth2.handler.OAuth2LoginSuccessHandler;
 import woori_design_web.back_woori_design_web.security.oauth2.service.CustomOAuth2UserService;
@@ -41,12 +42,10 @@ import java.util.Arrays;
 public class SecurityConfig {
 
     private final JwtService jwtService;
-    private final MemberRepository userRepository;
     private final JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final OauthConfig oauthConfig;
 
     @Bean
@@ -68,13 +67,10 @@ public class SecurityConfig {
                                 "/jwt-test",
                                 "/oauth2/**",
                                 "/login",
-                                "/api/v1/store/**",
                                 "/api/v1/board/**",
-                                "/api/v1/order/current",
-                                "/api/v1/auth",
-                                "/api/v1/event/**"
+                                "/api/v1/auth"
 
-                        ).permitAll() // 위를 제외한 나머지는 모두 허용
+                        ).permitAll() // 해당 요청은 인증이 필요 없음
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**"
                         ).permitAll()
                         .anyRequest().authenticated() // 해당 요청은 인증이 필요함
@@ -136,15 +132,16 @@ public class SecurityConfig {
 
 
 
+
+
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        // 구버전 RestClientAuthorizationCodeTokenResponseClient
+        RestClientAuthorizationCodeTokenResponseClient client = new RestClientAuthorizationCodeTokenResponseClient();
 
-        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient =
-                new DefaultAuthorizationCodeTokenResponseClient();
-        accessTokenResponseClient.setRequestEntityConverter(
-                new CustomRequestEntityConverter(new OAuth2AuthorizationCodeGrantRequestEntityConverter(),
-                        oauthConfig));
+        // 여기서 setRequestEntityConverter가 아닌 addParametersConverter 사용
+        client.addParametersConverter(new CustomParametersConverter());
 
-        return accessTokenResponseClient;
+        return client;
     }
 }

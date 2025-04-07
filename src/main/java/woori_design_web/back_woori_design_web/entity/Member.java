@@ -42,6 +42,10 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private SocialType provider;
 
+    // 소셜 로그인 타입의 식별자 값 (일반 로그인인 경우 null)
+    @Column(nullable = false)
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
     /**
      * 사용자 이메일
      */
