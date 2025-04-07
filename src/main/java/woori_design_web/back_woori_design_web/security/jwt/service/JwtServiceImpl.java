@@ -2,6 +2,7 @@ package woori_design_web.back_woori_design_web.security.jwt.service;
 
 
 
+import com.auth0.jwt.JWT;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -10,10 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import woori_design_web.back_woori_design_web.config.JwtConfig;
 import woori_design_web.back_woori_design_web.entity.Member;
+import woori_design_web.back_woori_design_web.entity.Role;
 import woori_design_web.back_woori_design_web.security.jwt.service.create.JwtTokenGenerator;
 import woori_design_web.back_woori_design_web.security.jwt.service.extract.ExtractToken;
 import woori_design_web.back_woori_design_web.security.jwt.service.sendmanger.JwtTokenizer;
 import woori_design_web.back_woori_design_web.service.member.MemberServiceFacade;
+
+import java.util.Optional;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +47,9 @@ public class JwtServiceImpl implements JwtService {
 	 * RefreshToken은 Claim에 email도 넣지 않으므로 withClaim() X
 	 */
 	@Override
-	public String createRefreshToken() {
+	public String createRefreshToken(String email) {
 
-		return hmacJwtTokenGeneratorImpl.generateRefreshToken();
+		return hmacJwtTokenGeneratorImpl.generateRefreshToken(email);
 	}
 
 	/**

@@ -2,10 +2,11 @@ package woori_design_web.back_woori_design_web.security.jwt.service;
 
 import java.util.Optional;
 
-import com.readyvery.readyverydemo.domain.Role;
+
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import woori_design_web.back_woori_design_web.entity.Role;
 
 public interface JwtService {
 
@@ -18,7 +19,7 @@ public interface JwtService {
 	 * RefreshToken 생성
 	 * RefreshToken은 Claim에 email도 넣지 않으므로 withClaim() X
 	 */
-	String createRefreshToken();
+	String createRefreshToken(String email);
 
 	/**
 	 * AccessToken + RefreshToken 헤더에 실어서 보내기

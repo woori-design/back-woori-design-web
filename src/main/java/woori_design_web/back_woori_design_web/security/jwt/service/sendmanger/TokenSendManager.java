@@ -2,12 +2,13 @@ package woori_design_web.back_woori_design_web.security.jwt.service.sendmanger;
 
 import org.springframework.stereotype.Component;
 
-import com.readyvery.readyverydemo.config.JwtConfig;
+
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import woori_design_web.back_woori_design_web.config.JwtConfig;
 
 @RequiredArgsConstructor
 @Component
@@ -25,18 +26,4 @@ public class TokenSendManager {
 
 	}
 
-	// public ResponseEntity<UserLoginSuccessRes> addTokenResponseBody(String accessToken, String refreshToken,
-	// 	Role role) {
-	// 	UserLoginSuccessRes userLoginSuccessRes = UserLoginSuccessRes.builder()
-	// 		.success(true)
-	// 		.message("로그인 성공")
-	// 		.accessToken(accessToken)
-	// 		.refreshToken(refreshToken)
-	// 		.role(role)
-	// 		.build();
-	//
-	// 	return ResponseEntity.ok()
-	// 		.contentType(MediaType.APPLICATION_JSON)
-	// 		.body(userLoginSuccessRes);
-	// }
 }

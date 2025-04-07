@@ -1,6 +1,6 @@
 package woori_design_web.back_woori_design_web.security.jwt.service.extract;
 
-import static woori_design_web.back_woori_design_web.config.JwtConfig.BEARER;
+
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+
+import static woori_design_web.back_woori_design_web.config.JwtConfig.BEARER;
 
 @Component
 public class ExtractToken {

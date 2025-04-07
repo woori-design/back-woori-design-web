@@ -1,6 +1,7 @@
 package woori_design_web.back_woori_design_web.security.jwt.filter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.springframework.context.annotation.Configuration;
@@ -82,40 +83,59 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 	 *  그 후 JwtService.sendAccessTokenAndRefreshToken()으로 응답 헤더에 보내기
 	 */
 	public void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-		refreshTokenRepository.findByRefreshToken(refreshToken)
-			.map(RefreshToken::getId) // RefreshToken 객체에서 ID를 추출합니다.
-			.flatMap(userRepository::findByEmail) // 추출된 ID를 이용하여 user를 조회합니다.
-			.ifPresent(user -> {
-				String reIssuedRefreshToken = reIssueRefreshToken(user);
-				jwtService.sendAccessAndRefreshToken(response, jwtService.createAccessToken(user.getEmail()),
-					reIssuedRefreshToken, user.getRole());
-			});
+		// 예: findByValue(refreshToken) 또는 findByRefreshToken(refreshToken)
+		refreshTokenRepository.findByValue(refreshToken)
+				.map(RefreshToken::getMember)  // RefreshToken에서 Member 객체를 꺼냄
+				.ifPresent(member -> {
+					// 새 리프레시 토큰 발급
+					String reIssuedRefreshToken = reIssueRefreshToken(member);
+
+					// AccessToken, RefreshToken을 헤더/쿠키 등에 담아 응답
+					jwtService.sendAccessAndRefreshToken(
+							response,
+							jwtService.createAccessToken(member.getEmail()),
+							reIssuedRefreshToken,
+							member.getRole()
+					);
+				});
 	}
+
 
 	/**
 	 * [리프레시 토큰 재발급 & DB에 리프레시 토큰 업데이트 메소드]
 	 * jwtService.createRefreshToken()으로 리프레시 토큰 재발급 후
 	 * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
 	 */
+	/**
+	 * refreshToken 재발급 & DB에 refreshToken 업데이트 메소드
+	 * jwtService.createRefreshToken()으로 RefreshToken 재발급 후
+	 * DB에 재발급한 리프레시 토큰 업데이트 후 Flush
+	 */
 	private String reIssueRefreshToken(Member member) {
-		String reIssuedRefreshToken = jwtService.createRefreshToken();
+		// 새로운 리프레시 토큰 값 생성 (JWT 등 원하는 방식 사용)
+		String reIssuedRefreshToken = jwtService.createRefreshToken(member.getEmail());
 
-		RefreshToken refreshToken = refreshTokenRepository.findById(member.getEmail())
-			.map(token -> {
-				// 이미 존재하는 토큰이 있으면, 새로 발급받은 리프레시 토큰으로 업데이트
-				token.update(reIssuedRefreshToken);
-				return token;
-			})
-			.orElseGet(() -> {
-				// 새로운 토큰 생성
-				return RefreshToken.builder()
-					.id(member.getEmail())
-					.refreshToken(reIssuedRefreshToken)
-					.build();
-			});
+		// '현재 회원'에게 할당된 RefreshToken이 DB에 있는지 먼저 확인
+		RefreshToken refreshToken = refreshTokenRepository.findByMember(member)
+				.map(token -> {
+					// 기존 토큰이 있다면 업데이트
+					token.update(reIssuedRefreshToken);
+					return token;
+				})
+				.orElseGet(() -> {
+					// 해당 회원의 토큰이 없다면 새로 생성
+					return RefreshToken.builder()
+							.member(member)
+							.value(reIssuedRefreshToken)
+							.expiresAt(LocalDateTime.now().plusDays(7)) // 필요 로직에 맞게
+							.isUsed(true)
+							.build();
+				});
 
+		// DB에 저장 (Update or Insert)
 		refreshTokenRepository.save(refreshToken);
-		return reIssuedRefreshToken;
+
+		return reIssuedRefreshToken; // 새로 발급된 리프레시 토큰 값 반환
 	}
 
 	/**
@@ -158,7 +178,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 		CustomUserDetails userDetailsUser = CustomUserDetails.builder()
 			.id(myUser.getId())
 			.email(myUser.getEmail())
-			.password("readyvery")
+			.password("woori-design")
 			.accessToken(accessToken)
 			.authorities(Collections.singletonList(new SimpleGrantedAuthority(myUser.getRole().toString())))
 			.build();

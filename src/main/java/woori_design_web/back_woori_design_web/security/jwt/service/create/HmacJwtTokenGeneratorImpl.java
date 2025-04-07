@@ -5,6 +5,7 @@ package woori_design_web.back_woori_design_web.security.jwt.service.create;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -36,13 +37,15 @@ public class HmacJwtTokenGeneratorImpl implements JwtTokenGenerator {
 	}
 
 	@Override
-	public String generateRefreshToken() {
+	public String generateRefreshToken(String email) {
 		// 토큰 생성 로직
 		Instant now = Instant.now();
 		Instant expirationTime = now.plus(jwtConfig.getRefreshTokenExpirationPeriod(), ChronoUnit.SECONDS);
 		return JWT.create()
-			.withSubject(REFRESH_TOKEN_SUBJECT)
-			.withExpiresAt(Date.from(expirationTime))
-			.sign(jwtConfig.getAlgorithm());
+				.withSubject(REFRESH_TOKEN_SUBJECT)
+				.withClaim("email", email)                // 이메일 or 사용자 ID 등
+				.withExpiresAt(Date.from(expirationTime))
+				.withJWTId(UUID.randomUUID().toString())  // + 랜덤 jti
+				.sign(jwtConfig.getAlgorithm());
 	}
 }

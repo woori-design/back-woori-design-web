@@ -17,7 +17,6 @@ public class JwtConfig {
 	private final String accessTokenName;
 	private final String refreshTokenName;
 	private final String userFrontendUrl;
-	private final String guestFrontendUrl;
 	private final Algorithm algorithm;
 
 	public static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
@@ -25,7 +24,6 @@ public class JwtConfig {
 	public static final String EMAIL_CLAIM = "email";
 	public static final String USER_NUMBER = "userNumber";
 	public static final String BEARER = "Bearer ";
-	public static final String AUTHORIZATION = "Authorization";
 
 	public JwtConfig(
 		@Value("${jwt.secretKey}") String secretKey,
@@ -33,8 +31,8 @@ public class JwtConfig {
 		@Value("${jwt.refresh.expiration}") Long refreshTokenExpirationPeriod,
 		@Value("${jwt.access.cookie}") String accessTokenName,
 		@Value("${jwt.refresh.cookie}") String refreshTokenName,
-		@Value("${jwt.redirect-uri-user}") String userFrontendUrl,
-		@Value("${jwt.redirect-uri-guest}") String guestFrontendUrl
+		@Value("${jwt.redirect-uri-user}") String userFrontendUrl
+
 
 	) {
 		this.secretKey = secretKey;
@@ -43,7 +41,7 @@ public class JwtConfig {
 		this.accessTokenName = accessTokenName;
 		this.refreshTokenName = refreshTokenName;
 		this.userFrontendUrl = userFrontendUrl;
-		this.guestFrontendUrl = guestFrontendUrl;
+
 		this.algorithm = initializeAlgorithm(secretKey);
 	}
 
