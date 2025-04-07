@@ -286,6 +286,7 @@ application.properties
 application-secret.yml
 *.yml
 .env
+.env.example
 *.properties
 build/
 gradle/
