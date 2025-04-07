@@ -75,13 +75,8 @@ public class OAuthAttributes {
 			.provider(socialType)
 			.socialId(oauth2UserInfo.getId())
 			.email(oauth2UserInfo.getEmail())
-			.phone(oauth2UserInfo.getPhoneNumber())
-			.age(oauth2UserInfo.getAge())
-			.birth(oauth2UserInfo.getBirth())
-			.nickName(oauth2UserInfo.getNickName())
-			.imageUrl(oauth2UserInfo.getImageUrl())
+			.name(oauth2UserInfo.getNickName())
 			.role(Role.USER)
-			.point(0L)
 			.build();
 	}
 }

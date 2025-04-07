@@ -26,23 +26,4 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
 			.orElse(null); // 여기에서는 null을 반환하지만, 다른 기본값으로 대체할 수도 있습니다.
 	}
 
-	@Override
-	public String getImageUrl() {
-		return (String)attributes.get("picture");
-	}
-
-	@Override
-	public String getPhoneNumber() {
-		return "readyvery";
-	}
-
-	@Override
-	public String getBirth() {
-		return "readyvery";
-	}
-
-	@Override
-	public String getAge() {
-		return "readyvery";
-	}
 }

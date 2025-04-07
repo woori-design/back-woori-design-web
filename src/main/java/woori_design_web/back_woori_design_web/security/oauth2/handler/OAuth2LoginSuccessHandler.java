@@ -14,7 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import woori_design_web.back_woori_design_web.config.JwtConfig;
+import woori_design_web.back_woori_design_web.entity.Member;
+import woori_design_web.back_woori_design_web.entity.Role;
 import woori_design_web.back_woori_design_web.security.jwt.service.JwtService;
+import woori_design_web.back_woori_design_web.security.jwt.service.refreshtoken.RefreshTokenService;
+import woori_design_web.back_woori_design_web.security.oauth2.CustomOAuth2User;
+import woori_design_web.back_woori_design_web.service.member.MemberServiceFacade;
 
 @Slf4j
 @Component
@@ -23,44 +28,48 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 	private final JwtService jwtService;
 	private final JwtConfig jwtConfig;
-	private final RefreshTokenService refreshTokenServiceImpl;
-	private final UserServiceFacade userServiceFacade;
+	private final RefreshTokenService refreshTokenServiceImpl;  // DB에 RefreshToken을 저장하는 서비스
+	private final MemberServiceFacade memberServiceFacade;      // Member 정보를 얻어오는 Facade/Service
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws
-		IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request,
+										HttpServletResponse response,
+										Authentication authentication)
+			throws IOException, ServletException {
 
 		try {
-			CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
-			// TODO : 아래 줄 예외 테스트 진행 필요
-			UserInfo userInfo = userServiceFacade.getUserInfoByEmail(
-				oAuth2User.getEmail()); // 사용자 정보가 없으면 예외 발생 (회원가입 페이지로 리다이렉트하기 위함
+			// 소셜 로그인 인증이 완료된 사용자 정보
+			CustomOAuth2User oAuth2User = (CustomOAuth2User) authentication.getPrincipal();
 
-			loginSuccess(response, oAuth2User, userInfo.getRole()); // 로그인에 성공한 경우 access, refresh 토큰 생성
-			// User의 Role이 GUEST일 경우 처음 요청한 회원이므로 회원가입 페이지로 리다이렉트
-			if (userInfo.getRole() == Role.GUEST) {
+			// DB에서 Member 엔티티 조회 (없으면 예외 처리)
+			Member member = memberServiceFacade.getMemberInfoByEmail(oAuth2User.getEmail());
 
-				response.sendRedirect(jwtConfig.getGuestFrontendUrl()); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+			// 액세스/리프레시 토큰 발급 및 저장
+			loginSuccess(response, member);
 
-			} else {
 
-				response.sendRedirect(jwtConfig.getUserFrontendUrl());
-			}
+
+			response.sendRedirect(jwtConfig.getUserFrontendUrl());
+
 
 		} catch (Exception e) {
+			// 필요한 경우 커스텀 예외 처리 또는 로깅
 			throw e;
 		}
-
 	}
 
-	// TODO : 소셜 로그인 시에도 무조건 토큰 생성하지 말고 JWT 인증 필터처럼 RefreshToken 유/무에 따라 다르게 처리해보기
-	private void loginSuccess(HttpServletResponse response, CustomOAuth2User oAuth2User, Role role) throws IOException {
-		String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
-		String refreshToken = jwtService.createRefreshToken();
+	/**
+	 * 액세스/리프레시 토큰을 발급하고, DB에 저장하는 메서드
+	 */
+	private void loginSuccess(HttpServletResponse response, Member member) throws IOException {
+		// 1) 액세스 토큰 / 리프레시 토큰 생성
+		String accessToken = jwtService.createAccessToken(member.getEmail());
+		String refreshToken = jwtService.createRefreshToken(member.getEmail());
 
-		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken, role);
-		refreshTokenServiceImpl.saveRefreshTokenInRedis(oAuth2User.getEmail(), refreshToken);
+		// 2) 발급된 토큰을 응답에 담아 전송 (쿠키나 헤더 등 방식은 jwtService 내부 구현에 따라 다름)
+		jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken, member.getRole());
+
+		// 3) DB 테이블에 RefreshToken 저장 (혹은 갱신)
+		refreshTokenServiceImpl.saveRefreshToken(member, refreshToken);
 	}
-
 }
